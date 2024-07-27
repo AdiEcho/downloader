@@ -38,7 +38,7 @@ type FileProgress struct {
 	CurrentSpeed int64
 }
 
-func DownloadFiles(urls []string) {
+func DownloadFiles(urls, filenames []string) {
 	var wg sync.WaitGroup
 	progressChans := make([]chan FileProgress, len(urls))
 	progressStates := make([]FileProgress, len(urls))
@@ -53,6 +53,9 @@ func DownloadFiles(urls []string) {
 			filename = parseFilename(url)
 		} else {
 			filename = "downloaded_" + strconv.Itoa(i)
+		}
+		if len(urls) == len(filenames) {
+			filename = filenames[i]
 		}
 		go func(i int, url string) {
 			defer wg.Done()

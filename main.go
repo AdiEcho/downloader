@@ -34,7 +34,7 @@ func main() {
 		return
 	case urlsStr != "":
 		urls = strings.Split(urlsStr, ",")
-		DownloadFiles(urls)
+		DownloadFiles(urls, nil)
 	default:
 		flag.Usage()
 		return
