@@ -27,6 +27,8 @@ var (
 	retryDelay     = time.Second * 2
 	useUrlFilename = true
 	Version        = "1.0.0"
+	SavePath       = "./"
+	Filenames      []string
 )
 
 const progressBarWidth = 50
@@ -191,7 +193,8 @@ func readResponseBody(body io.Reader, part *DownloadPart, progress chan<- int64)
 }
 
 func saveFile(filename string, parts []DownloadPart) {
-	file, err := os.Create(filename)
+	filePath := SavePath + filename
+	file, err := os.Create(filePath)
 	if err != nil {
 		log.Printf("Error creating file: %v", err)
 		return
