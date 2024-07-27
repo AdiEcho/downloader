@@ -26,6 +26,7 @@ var (
 	maxRetries     = 5
 	retryDelay     = time.Second * 2
 	useUrlFilename = true
+	Version        = "1.0.0"
 )
 
 const progressBarWidth = 50

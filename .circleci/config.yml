@@ -1,0 +1,53 @@
+version: 2.1
+
+jobs:
+  test-go:
+    docker:
+      - image: cimg/go:1.22.5
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: gotestsum --junitfile junit.xml
+      - store_test_results:
+          path: junit.xml
+
+  build-go-executables:
+    docker:
+      - image: cimg/go:1.22.5
+    steps:
+      - checkout
+      - run:
+          name: Create the ~/artifacts directory if it doesn't exist
+          command: mkdir -p ~/artifacts
+      - run:
+          name: Build executables for all platforms
+          command: make build-all
+      - persist_to_workspace:
+          root: ~/artifacts
+          paths:
+              - downloader_*
+      - store_artifacts:
+          path: ~/artifacts
+
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.13
+    steps:
+      - attach_workspace:
+          at: ~/artifacts
+      - run:
+          name: Publish Release on GitHub
+          command: |
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r downloader -c ${CIRCLE_SHA1} -delete v1.0.0 ~/artifacts/
+
+workflows:
+  build-and-test:
+    jobs:
+      - test-go
+      - build-go-executables:
+          requires:
+            - test-go
+      - publish-github-release:
+          requires:
+            - build-go-executables

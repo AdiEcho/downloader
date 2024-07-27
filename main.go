@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -19,6 +20,7 @@ func main() {
 
 	var urls []string
 	var urlsStr string
+	versionFlag := flag.Bool("version", false, "print the version")
 	flag.StringVar(&urlsStr, "u", "", "urls to download, use ',' to split")
 	flag.IntVar(&numThreads, "t", 4, "number of threads for each file download")
 	flag.IntVar(&maxRetries, "max_retries", 5, "max retries for download")
@@ -27,6 +29,9 @@ func main() {
 	flag.Parse()
 
 	switch {
+	case *versionFlag:
+		fmt.Printf(Version)
+		return
 	case urlsStr != "":
 		urls = strings.Split(urlsStr, ",")
 		DownloadFiles(urls)
